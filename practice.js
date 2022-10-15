@@ -24,13 +24,27 @@ var moreFruits = function (fruits) {
 
 // use _.each to traverse the number array and determine
 // which are multiples of five.
-var multiplesOfFive = function (numbers) {
+var multiplesOfFive = function (numbers, index, collection) {
+  var result = 0;
+  _.each(numbers, function(num) {
+    if (num % 5 === 0) {
+      result++;
+    }
+  });
 
+  return result;
 };
 
 // use _.each to build an array containing only tweets belonging to a specified user.
 var getUserTweets = function(tweets, user) {
+  var result = [];
 
+  _.each(tweets, function(currentTweet, index, collection) {
+    if (currentTweet.user === user) {
+      result.push(currentTweet);
+    }
+  });
+  return result;
 };
 
 /*
@@ -42,22 +56,42 @@ var getUserTweets = function(tweets, user) {
 // use _.filter to return the fruits array with only the desired fruit.
 var onlyOneFruit = function (fruits, targetFruit) {
 
+  return _.filter(fruits, function(fruit) {
+    return fruit === targetFruit;
+  });
 };
 
 // use _.filter to return the fruits array with only fruits
 // starting with the letter 'P'.
 var startsWith = function (fruits, letter) {
-
+  var answer = _.filter(fruits, function(item) {
+    //if item 0 === P
+    if (item[0] === letter) {
+      return item;
+    }
+      //return item
+  });
+  return answer;
 };
 
 // return a filtered array containing only cookie-type desserts.
 var cookiesOnly = function (desserts) {
-
+  var answer = _.filter(desserts, function(item) {
+    if (item.type === 'cookie') {
+      return item;
+    }
+  });
+  return answer;
 };
 
 // rebuild the getUserTweets function from above with _.filter instead
 var filterUserTweets = function(tweets, user) {
-
+  var answer = _.filter(tweets, function(item) {
+    if (item.user === user) {
+      return item;
+    }
+  });
+  return answer;
 };
 
 /*
@@ -69,20 +103,31 @@ var filterUserTweets = function(tweets, user) {
 // given an array of strings, use _.map to return a new array containing all
 // strings converted to uppercase letters.
 var upperCaseFruits = function (fruits) {
-
+  return _.map(fruits, function(item) {
+    return item.toUpperCase();
+  });
 };
 
 // given an array of dessert objects, return a new array of objects
 // that have a new "glutenFree" property, with a boolean value.
 // TIP: Items that contain flour are not gluten-free.
 var glutenFree = function (desserts) {
-
+  _.map(desserts, function(item) {
+    if (item.ingredients.includes('flour')) {
+      return item.glutenFree = false;
+    } else {
+      return item.glutenFree = true;
+    }
+  });
+  return desserts;
 };
 
 // given an array of tweet objects, return a new array of strings
 // containing only the message properties.
 var allUserMessages = function(tweets) {
-
+  return _.map(tweets, function(item) {
+    return item.message;
+  });
 };
 
 // use _.map to return an array of items with their sale prices, with a new property
@@ -107,6 +152,11 @@ var allUserMessages = function(tweets) {
 */
 var applyCoupon = function (groceries, coupon) {
 
+  _.map(groceries, function(item) {
+    item.salePrice = parseFloat(item.price.slice(1)) * (1 - coupon);
+    item.salePrice = '$' + item.salePrice.toFixed(2);
+  });
+  return groceries;
 };
 
 /*
@@ -118,12 +168,23 @@ var applyCoupon = function (groceries, coupon) {
 // return the total price of all products.
 var sumTotal = function (products) {
 
+  return _.reduce(products, function(acc, cur) {
+    var currentPrice = parseFloat(cur.price.slice(1));
+    return acc + currentPrice;
+  }, 0);
 };
 
 // return an object consisting of dessert types and how many of each.
 // exampleOutput: { dessertType: 3, dessertType2: 1 }
 var dessertCategories = function (desserts) {
-
+  return _.reduce(desserts, function(acc, cur) {
+    if (acc[cur.type] === undefined) {
+      acc[cur.type] = 1;
+    } else {
+      acc[cur.type]++;
+    }
+    return acc;
+  }, {});
 };
 
 // return an object with the proper count of all user messages
@@ -138,6 +199,16 @@ var dessertCategories = function (desserts) {
   }
 */
 var countMessagesPerUser = function(tweets) {
+  return _.reduce(tweets, function(acc, curTweet) {
+    var currentUser = curTweet.user;
+
+    if (acc[currentUser] === undefined) {
+      acc[currentUser] = 1;
+    } else {
+      acc[currentUser]++;
+    }
+    return acc;
+  }, {});
 
 };
 
@@ -145,12 +216,23 @@ var countMessagesPerUser = function(tweets) {
 // movies that came out between 1990 and 2000.
 // TIP: use an array as your accumulator - don't push to an external array!
 var ninetiesKid = function (movies) {
+  return _.reduce(movies, function(acc, currentMovie) {
 
+    if (currentMovie.releaseYear >= 1990 && currentMovie.releaseYear <= 2000) {
+      acc.push(currentMovie.title);
+    }
+    return acc;
+  }, []);
 };
 
 // return an boolean stating if there exists a movie with a shorter
 // runtime than your time limit.
 // timeLimit is an integer representing a number of minutes.
 var movieNight = function (movies, timeLimit) {
-
+  return _.reduce(movies, function(acc, cur) {
+    if (cur.runtime < timeLimit) {
+      acc = true;
+    }
+    return acc;
+  }, false);
 };
